@@ -1,3 +1,10 @@
 {
-  "relatedProjects": ["prj_Hh9xAWkEujAz2sJhSVhILo5wC5Nf"]
+  "relatedProjects": ["prj_Hh9xAWkEujAz2sJhSVhILo5wC5Nf"],
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "functions": {
+    "app/**": {
+      "runtime": "nodejs20.x"
+    }
+  }
 } 
