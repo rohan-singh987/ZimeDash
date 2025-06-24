@@ -1,6 +1,11 @@
 import axios from 'axios';
+import { withRelatedProject } from '@vercel/related-projects';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Use Vercel's related projects with fallback
+const API_BASE_URL = withRelatedProject({
+  projectName: 'project-management-backend',
+  defaultHost: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+});
 
 // Create axios instance with default config
 const api = axios.create({
