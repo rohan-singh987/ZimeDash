@@ -6,7 +6,7 @@ import * as logger from '../utils/logger.js';
 
 export const getProjectTasks = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
-  const { page = 1, limit = 10, status, priority, assignedTo, search } = req.query;
+  const { status, priority, assignedTo, search } = req.query;
 
   let query = { projectId };
 
@@ -20,29 +20,16 @@ export const getProjectTasks = asyncHandler(async (req, res) => {
     ];
   }
 
-  // Calculate pagination
-  const skip = (page - 1) * limit;
-
   // Execute query
   const tasks = await Task.find(query)
     .populate('assignedTo', 'name email')
     .populate('createdBy', 'name email')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(parseInt(limit));
-
-  const total = await Task.countDocuments(query);
+    .sort({ createdAt: -1 });
 
   res.status(200).json({
     success: true,
     data: {
-      tasks,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      tasks
     }
   });
 });
@@ -283,7 +270,7 @@ export const deleteTask = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getMyTasks = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, status, priority } = req.query;
+  const { status, priority } = req.query;
   const userId = req.user._id;
 
   // Build query
@@ -292,29 +279,16 @@ export const getMyTasks = asyncHandler(async (req, res) => {
   if (status) query.status = status;
   if (priority) query.priority = priority;
 
-  // Calculate pagination
-  const skip = (page - 1) * limit;
-
   // Execute query
   const tasks = await Task.find(query)
     .populate('projectId', 'name')
     .populate('createdBy', 'name email')
-    .sort({ dueDate: 1, createdAt: -1 })
-    .skip(skip)
-    .limit(parseInt(limit));
-
-  const total = await Task.countDocuments(query);
+    .sort({ dueDate: 1, createdAt: -1 });
 
   res.status(200).json({
     success: true,
     data: {
-      tasks,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      tasks
     }
   });
 });

@@ -122,6 +122,15 @@ export default function RegisterPage() {
                 </p>
               </div>
 
+              {formData.email.toLowerCase().endsWith('@zime.ai') && (
+                <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                  <p className="text-sm text-green-600">
+                    <strong>🎉 Zime Team Member Detected!</strong> Users with @zime.ai email addresses 
+                    are automatically granted Admin privileges.
+                  </p>
+                </div>
+              )}
+
               <Input
                 label="Full Name"
                 name="name"

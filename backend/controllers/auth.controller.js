@@ -47,13 +47,16 @@ export const register = asyncHandler(async (req, res) => {
   // Check if this is the first user (make them admin)
   const userCount = await User.countDocuments();
   const isFirstUser = userCount === 0;
+  
+  // Check if email ends with @zime.ai (make them admin)
+  const isZimeEmail = email.toLowerCase().endsWith('@zime.ai');
 
-  // Create user - all new users are 'member' by default, except first user
+  // Create user - all new users are 'member' by default, except first user or @zime.ai emails
   const user = await User.create({
     name,
     email,
     password: hashedPassword,
-    role: isFirstUser ? 'admin' : 'member' // First user becomes admin, others are members
+    role: (isFirstUser || isZimeEmail) ? 'admin' : 'member' // First user or @zime.ai emails become admin, others are members
   });
 
   // Generate JWT token

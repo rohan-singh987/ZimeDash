@@ -9,7 +9,7 @@ import * as logger from '../utils/logger.js';
  * @access Private (Admin/Manager)
  */
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, role, isActive, search } = req.query;
+  const { role, isActive, search } = req.query;
 
   const query = {};
   
@@ -22,26 +22,14 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     ];
   }
 
-  const skip = (page - 1) * limit;
-
   const users = await User.find(query)
     .select('-password')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(parseInt(limit));
-
-  const total = await User.countDocuments(query);
+    .sort({ createdAt: -1 });
 
   res.status(200).json({
     success: true,
     data: {
-      users,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      users
     }
   });
 });

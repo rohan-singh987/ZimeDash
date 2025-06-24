@@ -101,6 +101,14 @@ export default function LoginPage() {
                 </div>
               )}
 
+              {formData.email.toLowerCase().endsWith('@zime.ai') && (
+                <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                  <p className="text-sm text-green-600">
+                    <strong>🎉 Zime Team Member!</strong> Your @zime.ai email grants you Admin access.
+                  </p>
+                </div>
+              )}
+
               <Input
                 label="Email address"
                 name="email"

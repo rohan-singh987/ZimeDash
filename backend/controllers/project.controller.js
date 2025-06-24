@@ -12,7 +12,7 @@ import * as logger from '../utils/logger.js';
  * @access Private (Based on role)
  */
 export const getAllProjects = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, status, search } = req.query;
+  const { status, search } = req.query;
   const userId = req.user._id;
   const userRole = req.user.role;
 
@@ -41,29 +41,16 @@ export const getAllProjects = asyncHandler(async (req, res) => {
     });
   }
 
-  // Calculate pagination
-  const skip = (page - 1) * limit;
-
   // Execute query
   const projects = await Project.find(query)
     .populate('createdBy', 'name email')
     .populate('members.user', 'name email')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(parseInt(limit));
-
-  const total = await Project.countDocuments(query);
+    .sort({ createdAt: -1 });
 
   res.status(200).json({
     success: true,
     data: {
-      projects,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
+      projects
     }
   });
 });
@@ -112,13 +99,20 @@ export const createProject = asyncHandler(async (req, res) => {
     });
   }
 
+  // Transform members array to proper format
+  const formattedMembers = (members || []).map(userId => ({
+    user: userId,
+    role: 'member',
+    addedAt: new Date()
+  }));
+
   // Create project
   const project = await Project.create({
     name,
     description,
     status: status || 'Planned',
     createdBy: userId,
-    members: members || [],
+    members: formattedMembers,
     startDate,
     endDate,
     priority: priority || 'Medium'
@@ -156,6 +150,26 @@ export const updateProject = asyncHandler(async (req, res) => {
   delete updateData.createdBy;
   delete updateData.totalTasks;
   delete updateData.completedTasks;
+
+  // Transform members array if provided
+  if (updateData.members && Array.isArray(updateData.members)) {
+    updateData.members = updateData.members.map(member => {
+      // If it's already an object with user property, keep it
+      if (typeof member === 'object' && member.user) {
+        return member;
+      }
+      // If it's a string (user ID), transform it
+      if (typeof member === 'string') {
+        return {
+          user: member,
+          role: 'member',
+          addedAt: new Date()
+        };
+      }
+      // Otherwise, keep as is
+      return member;
+    });
+  }
 
   const project = await Project.findByIdAndUpdate(
     id,

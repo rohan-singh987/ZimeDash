@@ -272,12 +272,12 @@ export default function ProjectDetailPage() {
                 {project.members && project.members.length > 0 ? (
                   <div className="space-y-3">
                     {project.members.map((member) => (
-                      <div key={member._id} className="flex items-center space-x-3">
+                      <div key={member._id || member.user?._id} className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                          {member.name.charAt(0).toUpperCase()}
+                          {(member.user?.name || member.name || 'U').charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{member.name}</p>
+                          <p className="text-sm font-medium text-gray-900">{member.user?.name || member.name}</p>
                           <p className="text-xs text-gray-500">{member.role}</p>
                         </div>
                       </div>

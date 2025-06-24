@@ -34,9 +34,9 @@ export default function DashboardPage() {
       setLoading(true);
       
       // Fetch projects
-      const projectsResponse = await projectsAPI.getAll({ limit: 5 });
+      const projectsResponse = await projectsAPI.getAll();
       const projects = projectsResponse.data.data.projects;
-      setRecentProjects(projects);
+      setRecentProjects(projects.slice(0, 5)); // Show only first 5 for dashboard
       
       // Calculate project stats
       const projectStats = {
@@ -46,9 +46,9 @@ export default function DashboardPage() {
       };
 
       // Fetch my tasks
-      const tasksResponse = await tasksAPI.getMyTasks({ limit: 5 });
+      const tasksResponse = await tasksAPI.getMyTasks();
       const tasks = tasksResponse.data.data.tasks;
-      setMyTasks(tasks);
+      setMyTasks(tasks.slice(0, 5)); // Show only first 5 for dashboard
 
       // Calculate task stats
       const taskStats = {
