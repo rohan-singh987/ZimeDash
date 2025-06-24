@@ -1,17 +1,6 @@
+// Development error handler
 import * as logger from '../utils/logger.js';
 
-/**
- * Centralized error handling middleware
- * Handles all errors thrown in the application and returns appropriate responses
- */
-
-/**
- * Development error handler - includes stack trace
- * @param {Error} err - Error object
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
- */
 const developmentErrorHandler = (err, req, res, next) => {
   const error = {
     success: false,
@@ -25,21 +14,13 @@ const developmentErrorHandler = (err, req, res, next) => {
   res.status(err.statusCode || 500).json(error);
 };
 
-/**
- * Production error handler - sanitized errors
- * @param {Error} err - Error object
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
- */
+// Production error handler - sanitized errors
 const productionErrorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
   
-  // Log error for debugging
   logger.error('Production Error', err);
   
-  // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     const message = 'Invalid resource ID';
     error = { message, statusCode: 400 };
@@ -75,16 +56,11 @@ const productionErrorHandler = (err, req, res, next) => {
   });
 };
 
-/**
- * Main error handler middleware
- * Routes to appropriate error handler based on environment
- */
+// Main error handler middleware
 const errorHandler = (err, req, res, next) => {
-  // Set default error values
   let error = { ...err };
   error.message = err.message;
   
-  // Log request details with error
   logger.error('API Error', {
     error: err.message,
     method: req.method,
@@ -101,22 +77,12 @@ const errorHandler = (err, req, res, next) => {
   }
 };
 
-/**
- * Handle async errors in route handlers
- * Wraps async functions to catch errors automatically
- * @param {Function} fn - Async function to wrap
- * @returns {Function} - Wrapped function
- */
+// Handle async errors in route handlers
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
 
-/**
- * Handle 404 errors for unmatched routes
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
- */
+// Handle 404 errors for unmatched routes
 const notFound = (req, res, next) => {
   const error = new Error(`Route not found: ${req.originalUrl}`);
   error.statusCode = 404;

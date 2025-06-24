@@ -1,11 +1,7 @@
+// User Controller: Handles user management operations
 import User from '../models/user.model.js';
 import { asyncHandler } from '../middlewares/error.middleware.js';
 import * as logger from '../utils/logger.js';
-
-/**
- * User Controller
- * Handles user management operations
- */
 
 /**
  * Get all users
@@ -15,7 +11,6 @@ import * as logger from '../utils/logger.js';
 export const getAllUsers = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, role, isActive, search } = req.query;
 
-  // Build query
   const query = {};
   
   if (role) query.role = role;
@@ -27,10 +22,8 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     ];
   }
 
-  // Calculate pagination
   const skip = (page - 1) * limit;
 
-  // Execute query
   const users = await User.find(query)
     .select('-password')
     .sort({ createdAt: -1 })
