@@ -13,7 +13,7 @@ A full-stack project management application with role-based access control. Buil
 ## Tech Stack
 
 - **Backend**: Express.js, MongoDB, JWT, bcryptjs
-- **Frontend**: Next.js 15, React 19, Tailwind CSS 4, Axios
+- **Frontend**: Next.js, Tailwind CSS, Axios
 
 ## Setup
 
